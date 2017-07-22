@@ -34,7 +34,9 @@ class Brand extends ActiveRecord{
         return [
             //上传文件规则
             [['name','intro','sort','status'],'required','message'=>'{attribute}不能为空'],
-          ['imgFile','file','extensions'=>['jpg','gif','png']]
+         // ['imgFile','file','extensions'=>['jpg','gif','png']]
+            ['logo','string']
+
         ];
     }
     public function attributeLabels()
