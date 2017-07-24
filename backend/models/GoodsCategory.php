@@ -33,7 +33,7 @@ class GoodsCategory extends ActiveRecord
     public function rules()
     {
         return [
-            [['name','parent_id','intro'],'required'],
+            [['name','parent_id'],'required'],
             [['tree', 'lft', 'rgt', 'depth', 'parent_id'], 'integer'],
             [['intro'], 'string'],
             [['name'], 'string', 'max' => 50],

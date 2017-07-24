@@ -9,7 +9,7 @@ class GoodsCategoryController extends \yii\web\Controller
 {
     public function actionIndex()
     {
-        $goods = GoodsCategory::find()->all();
+        $goods = GoodsCategory::find()->orderBy('tree,lft')->all();
 
         return $this->render('index',['goods'=>$goods]);
     }
@@ -78,9 +78,11 @@ class GoodsCategoryController extends \yii\web\Controller
     public function actionEdit($id){
         //实例化对象
         $model = GoodsCategory::findOne($id);
+        //$parent_id = $model->parent_id;
         if($model->load(\Yii::$app->request->post()) && $model->validate()){
             //判断是否添加一级分类
             if($model->parent_id==$id){
+                //判断不能修改到同级下面
                 \Yii::$app->session->setFlash('danger','修改失败,不能修改到自己分类下面');
                 return $this->redirect(['goods-category/index']);
             }
@@ -96,7 +98,12 @@ class GoodsCategoryController extends \yii\web\Controller
 
             }else{
                 //一级分类
-                $model->makeRoot();
+                if($model->oldAttributes['parent_id'] == 0){
+                    $model->save();
+                }else{
+                    $model->makeRoot();
+                }
+
             }
             //跳转到首页
             //显示成提示
@@ -115,8 +122,11 @@ class GoodsCategoryController extends \yii\web\Controller
     //删除方法 不能删除有子类的父id
     public function  actionDelete($id){
         $model = GoodsCategory::findOne($id);
+        //查找条件为id = parent_id
         $pr = GoodsCategory::find()->where(['parent_id'=>$id]);
+
         $count = $pr->count();
+        //如果parent_id总数大于0 就不能删除
         if($count>0){
             \Yii::$app->session->setFlash('danger','有儿子还在还不能死');
             return $this->redirect(['goods-category/index']);

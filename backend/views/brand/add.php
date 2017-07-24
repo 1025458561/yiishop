@@ -19,16 +19,16 @@ echo \flyok666\uploadifive\Uploadifive::widget([
     'csrf' => true,
     'renderTag' => false,
     'jsOptions' => [
-        'formData'=>['someKey' => 'someValue'],
-        'width' => 120,
-        'height' => 40,
-        'onError' => new JsExpression(<<<EOF
+    'formData'=>['someKey' => 'someValue'],
+    'width' => 120,
+    'height' => 40,
+    'onError' => new JsExpression(<<<EOF
 function(file, errorCode, errorMsg, errorString) {
     console.log('The file ' + file.name + ' could not be uploaded: ' + errorString + errorCode + errorMsg);
 }
 EOF
-        ),
-        'onUploadComplete' => new JsExpression(<<<EOF
+    ),
+    'onUploadComplete' => new JsExpression(<<<EOF
 function(file, data, response) {
     data = JSON.parse(data);
     if (data.error) {
@@ -42,8 +42,8 @@ function(file, data, response) {
     }
 }
 EOF
-        ),
-    ]
+    ),
+]
 ]);
 
 echo \yii\bootstrap\Html::img($model->logo?$model->logo:false,['id'=>'img','height'=>60]);
