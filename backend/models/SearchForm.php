@@ -16,7 +16,7 @@ class SearchForm extends Model{
     public $k;
     public function rules(){
         return [
-            ['name','string','max'=>50],
+            [['name','string'],'safe'],
              ['sn','string'],
             //double
           ['k','string','max'=>20]
@@ -25,7 +25,7 @@ class SearchForm extends Model{
 
     //搜索定义属性
     //接收rs传的参数
-    //ActiveQuery 查询接收参数的值
+
     public function search(ActiveQuery $rs){
         //加载get提交数据表单
         $this->load(\Yii::$app->request->get());

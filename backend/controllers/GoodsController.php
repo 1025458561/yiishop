@@ -145,7 +145,6 @@ class GoodsController extends \yii\web\Controller
                 var_dump($daymodel->getErrors());
             }
 
-
             //添加内容模型
             if($admodel->validate()){
                 $admodel->goods_id = $model->id;
@@ -165,13 +164,16 @@ class GoodsController extends \yii\web\Controller
 
     }
 
-///----------
-//添加相册方法
-    public function actionGallery($id){
-        $model = Goods::find($id);
-        $gallerymodel = new GoodsGallery();
-       // $gallerymodel->goods_id = $model->$id;
-        return $this->render('gallery',['gallerymodel'=>$gallerymodel]);
+    //展示相册图片
+    public function actionGallery($id)
+    {
+        $goodsGallerys = GoodsGallery::find()->where(['goods_id'=>$id])->all();
+
+        return $this->render('gallery', [
+            'goodsGallerys'=>$goodsGallerys,
+                'goods_id'=>$id
+            ]);
+
     }
 
 
@@ -228,7 +230,7 @@ class GoodsController extends \yii\web\Controller
                 'afterValidate' => function (UploadAction $action) {},
                 'beforeSave' => function (UploadAction $action) {},
                 'afterSave' => function (UploadAction $action) {
-                    $action->output['fileUrl'] = $action->getWebUrl();
+                    /*$action->output['fileUrl'] = $action->getWebUrl();
                     //  $action->getFilename(); // "image/yyyymmddtimerand.jpg"
                     // $action->getWebUrl(); //  "baseUrl + filename, /upload/image/yyyymmddtimerand.jpg"
                     // $action->getSavePath(); // "/var/www/htdocs/upload/image/yyyymmddtimerand.jpg"
@@ -238,21 +240,25 @@ class GoodsController extends \yii\web\Controller
                         $action->getSavePath(), $action->getWebUrl()
                     );
                     $url = $qiniu->getLink($action->getWebUrl());
-                    $action->output['fileUrl'] = $url;
+                    $action->output['fileUrl'] = $url;*/
+                    $goods_id = \Yii::$app->request->post('goods_id');
+                    if($goods_id){
+                        $model = new GoodsGallery();
+                        $model->goods_id = $goods_id;
+                        $model->path = $action->getWebUrl();
+                        $model->save();
+                        $action->output['fileUrl'] = $model->path;
+                        $action->output['id'] = $model->id;
+                    }else{
+                        $action->output['fileUrl'] = $action->getWebUrl();//输出文件的相对路径
+                    }
                 },
             ],
         ];
 
-
-
-
-
-
-
-
     }
     //保存到七牛云
-    public function actionQiniu(){
+  /*  public function actionQiniu(){
         $config = [
             'accessKey'=>'lX4u3vgZbhaXpKgV-PytdLqoGpKT1SykXJr4XyjO',
             'secretKey'=>'oaZEfqIDiFV6XX7LyrG64kEI7_ALvpCbDOlp1E9C',
@@ -260,6 +266,6 @@ class GoodsController extends \yii\web\Controller
             'bucket'=>'yiishop',
             'area'=>Qiniu::AREA_HUADONG
         ];
-    }
+    }*/
 
 }

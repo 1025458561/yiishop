@@ -1,4 +1,5 @@
 <?php
+
 $form = \yii\bootstrap\ActiveForm::begin([
         //get提交过去
     'method' => 'get',
@@ -7,8 +8,8 @@ $form = \yii\bootstrap\ActiveForm::begin([
     'layout'=>'inline'
 ]);
 
-echo $form->field($model,'name')->textInput(['placeholder'=>'商品名'])->label(false);
-echo $form->field($model,'sn')->textInput(['placeholder'=>'货号'])->label(false);
+echo $form->field($model,'name')->textInput(['placeholder'=>'商品名']);
+echo $form->field($model,'sn')->textInput(['placeholder'=>'货号']);
 echo \yii\bootstrap\Html::submitButton('搜索',['class'=>'btn btn-info']);
 \yii\bootstrap\ActiveForm::end();
 ?>
