@@ -8,6 +8,7 @@
 
 namespace backend\controllers;
 
+use backend\filters\RbacFilter;
 use flyok666\qiniu\Qiniu;
 use yii\web\Controller;
 use backend\models\Brand;
@@ -192,4 +193,15 @@ class BrandController extends Controller
         $url = $qiniu->getLink($key);
         var_dump($url);
     }
+
+
+    public function behaviors()
+    {
+        return [
+            'rbac'=>[
+                'class'=>RbacFilter::className(),
+            ]
+        ];
+    }
+
 }

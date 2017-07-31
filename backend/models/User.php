@@ -15,19 +15,23 @@ class User extends ActiveRecord implements IdentityInterface {
     public $apassword;
     public $bpassword;
     public $cpassword;
+    public $Roles= [];
     const SCENARIO_ADD='add';
     const SCENARIO_PERSONAL='Personal';
+
     public static $status =[
         '10'=>'正常','0'=>'禁用'
     ];
     public function rules()
     {
         return [
+            ['Roles','safe'],
             [['username','password'],'required','on'=>self::SCENARIO_ADD],
              ['email','safe'],
             ['username','unique'],
             [['apassword','bpassword','cpassword'],'required','on'=>self::SCENARIO_PERSONAL],
-            ['cpassword','compare','compareAttribute'=>'bpassword','message'=>'两次密码必须一致','on'=>self::SCENARIO_PERSONAL]
+            ['cpassword','compare','compareAttribute'=>'bpassword','message'=>'两次密码必须一致','on'=>self::SCENARIO_PERSONAL],
+
         ];
     }
 
@@ -39,7 +43,8 @@ class User extends ActiveRecord implements IdentityInterface {
             'email'=>'邮箱',
             'apassword'=>'旧密码',
             'bpassword'=>'新密码',
-            'cpassword'=>'确认新密码'
+            'cpassword'=>'确认新密码',
+            'Roles'=>'添加角色'
         ];
     }
 

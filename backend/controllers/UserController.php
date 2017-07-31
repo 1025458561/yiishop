@@ -7,10 +7,12 @@
  */
 namespace backend\controllers;
 
+use backend\filters\RbacFilter;
 use backend\models\LoginForm;
 use backend\models\User;
 use yii\captcha\CaptchaAction;
 use yii\data\Pagination;
+use yii\helpers\ArrayHelper;
 use yii\web\Controller;
 use yii\web\Request;
 
@@ -35,9 +37,22 @@ class UserController extends Controller{
     public function actionAdd(){
         $model = new User();
         $model->scenario=User::SCENARIO_ADD;
+        $authManager = \Yii::$app->authManager;
        if($model->load(\Yii::$app->request->post()) && $model->validate()){
-
+           //var_dump($model->Roles);exit;
            $model->save();
+
+             //添加角色
+           //$role = $authManager->createRole();
+               if(is_array($model->Roles)){
+                   foreach ($model->Roles as $role){
+                       $roles = $authManager->getRole($role);
+                     //  var_dump($roles);exit;
+                       if($roles) $authManager->assign($roles,$model->id);
+                   }
+               }
+
+
            \Yii::$app->session->setFlash('success','添加成功');
            return $this->redirect('index');
        }
@@ -47,11 +62,29 @@ class UserController extends Controller{
     //修改
     public function actionEdit($id){
       $model= User::findOne(['id'=>$id]);
+      $authManager = \Yii::$app->authManager;
+      //$role = $authManager->getRole();
+       // $role =  $authManager->getRole($name);
         if($model->load(\Yii::$app->request->post()) && $model->validate()){
             $model->save();
+
+           $authManager->revokeAll($id);
+            if(is_array($model->Roles)){
+                foreach ($model->Roles as $role){
+                    $roles = $authManager->getRole($role);
+                    //  var_dump($roles);exit;
+                    if($roles) $authManager->assign($roles,$model->id);
+                }
+            }
+
+
             \Yii::$app->session->setFlash('success','修改成功');
             return $this->redirect('index');
         }
+        //回显表单数据
+       $roles = $authManager->getRolesByUser($id);
+        $model->Roles = ArrayHelper::map($roles,'name','name');
+
         return $this->render('add',['model'=>$model]);
     }
     //删除
@@ -81,6 +114,7 @@ class UserController extends Controller{
                 \Yii::$app->session->setFlash('success','登录成功');
                 return $this->redirect('index');
             }
+            var_dump($model->getErrors());exit;
         }
       /*  if($model->load(\Yii::$app->request->post()) && $model->login()){
 
@@ -121,16 +155,27 @@ class UserController extends Controller{
               //  var_dump($model);exit;
                 $model->password_hash=\Yii::$app->security->generatePasswordHash($model->bpassword);
                 $model->save();
-                \Yii::$app->session->setFlash('success','用户修改成功');
+                \Yii::$app->session->setFlash('success','用户修改成功,请重新登录');
                 \Yii::$app->user->logout();
                 return $this->redirect(['user/login']);
             }elseif(\Yii::$app->security->validatePassword($model->apassword,$model->password_hash) && $model->bpassword==$model->apassword){
-                $model->addError('bpssword','新密码不能和旧密码一样');
+                $model->addError('bpassword','新密码不能和旧密码一样');
             }else{
                 $model->addError('apassword','旧密码输入错误');
             }
         }
-
         return $this->render('personal',['model'=>$model]);
     }
+
+    public function behaviors()
+    {
+        return [
+            'rbac'=>[
+                'class'=>RbacFilter::className(),
+              //  'only'=>['add','delete','edit','index']
+                'except'=>['login','captcha']
+            ]
+        ];
+    }
+
 }

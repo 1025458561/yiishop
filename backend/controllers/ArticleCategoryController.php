@@ -7,6 +7,7 @@
  */
 namespace backend\controllers;
 
+use backend\filters\RbacFilter;
 use yii\web\Controller;
 use backend\models\ArticleCategory;
 use yii\web\Request;
@@ -71,4 +72,15 @@ class ArticleCategoryController extends Controller{
         //显示页面
         return $this->render('add',['model'=>$model]);
     }
+
+    //权限
+    public function behaviors()
+    {
+        return [
+            'rbac'=>[
+                'class'=>RbacFilter::className(),
+            ]
+        ];
+    }
+
 }

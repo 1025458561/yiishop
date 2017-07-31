@@ -7,6 +7,7 @@
  */
 namespace backend\controllers;
 
+use backend\filters\RbacFilter;
 use backend\models\ArticleDetail;
 use yii\web\Controller;
 use yii\data\Pagination;
@@ -27,5 +28,15 @@ class ArticleDetailController extends Controller{
         $article = $rs->limit($pager->limit)->offset($pager->offset)->all();
         return $this->render('index',['article'=>$article,'pager'=>$pager]);
     }
+
+    public function behaviors()
+    {
+        return [
+            'rbac'=>[
+                'class'=>RbacFilter::className(),
+            ]
+        ];
+    }
+
 
 }

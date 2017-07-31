@@ -35,12 +35,29 @@ AppAsset::register($this);
             'class' => 'navbar-inverse navbar-fixed-top',
         ],
     ]);
-    $menuItems = [
-        ['label' => 'Home', 'url' => ['/site/index']],
-    ];
+   // $menuItems = [
+        //['label' => 'Home', 'url' => ['/site/index']],
+      /*  ['label' => '文章列表', 'url' => ['/article/index']],
+        ['label' => '品牌管理', 'url' => ['/brand/index']],
+        ['label' => '用户管理', 'url' => ['/user/index']],
+        ['label' => '商品管理', 'url' => ['/goods/index']],*/
+
+   // ];
+
+
     if (Yii::$app->user->isGuest) {
-        $menuItems[] = ['label' => 'Login', 'url' => ['/user/login']];
+        $menuItems[] = ['label' => '登录', 'url' => ['/user/login']];
     } else {
+        $menuItems =[];
+        $menus = \backend\models\Menu::findAll(['parent_id'=>0]);
+        foreach($menus as $menu){
+            //一级菜单
+            $items = [];
+            foreach ($menu->children as $child){
+                $items[]=['label' => $child->menu_name , 'url' => [$child->menu_url]];
+            }
+            $menuItems[] = ['label' =>$menu->menu_name, 'items' => $items];
+        }
         $menuItems[] = '<li>'
             . Html::beginForm(['/site/logout'], 'post')
             . Html::submitButton(
