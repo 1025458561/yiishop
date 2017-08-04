@@ -74,12 +74,12 @@
                 </li>
                 <li id="tel">
                     <label for="">手机号码：</label>
-                    <input type="text" class="txt" value="<?=$model->tel?>" name="Member[tel]" id="tel" placeholder=""/>
+                    <input type="text" class="txt" value="<?=$model->tel?>" name="Member[tel]" id="telnum" placeholder=""/>
                 </li>
-                <!--                    <li>-->
-                <!--                        <label for="">验证码：</label>-->
-                <!--                        <input type="text" class="txt" value="" placeholder="请输入短信验证码" name="captcha" disabled="disabled" id="captcha"/> <input type="button" onclick="bindPhoneNum(this)" id="get_captcha" value="获取验证码" style="height: 25px;padding:3px 8px"/>-->
-                <!---->
+                <li>
+                    <label for="">短信验证：</label>
+                    <input type="text" class="txt" value="" placeholder="请输入短信验证码" name="sms" disabled="disabled" id="captcha"/> <input type="button" onclick="bindPhoneNum(this)" id="get_captcha" value="获取验证码" style="height: 25px;padding:3px 8px"/>
+
                 </li>
                 <li class="checkcode" id="code">
                     <?=$form->field($model,'code')->widget(\yii\captcha\Captcha::className(),['captchaAction'=>'member/captcha'])?>
@@ -140,10 +140,19 @@
 <script type="text/javascript" src="<?=\Yii::getAlias('@web')?>/js/jquery-1.8.3.min.js"></script>
 <script type="text/javascript">
     function bindPhoneNum(){
+        //获取手机号码
+       var telnum = $('#telnum').val();
+       // console.log(telnum);return '';
+        if(!telnum){
+            alert('请填写手机号码'); return false;
+        }
         //启用输入框
         $('#captcha').prop('disabled',false);
-
-        var time=30;
+        //发送短信
+        $.get('/member/sms',{tel:telnum},function($data){
+            console.log($data);
+        });
+        var time=60;
         var interval = setInterval(function(){
             time--;
             if(time<=0){
@@ -158,6 +167,9 @@
             $('#get_captcha').val(html);
         },1000);
     }
+
+
+
     <?php
     if($model->getErrors()) {
         foreach ($model->errors as $name => $error) {

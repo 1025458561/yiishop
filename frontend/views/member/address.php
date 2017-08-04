@@ -14,6 +14,7 @@
     <script type="text/javascript" src="<?=\Yii::getAlias('@web')?>/js/jquery-1.8.3.min.js"></script>
     <script type="text/javascript" src="<?=\Yii::getAlias('@web')?>/js/header.js"></script>
     <script type="text/javascript" src="<?=\Yii::getAlias('@web')?>/js/home.js"></script>
+    <script type="text/javascript" src="<?=\Yii::getAlias('@web')?>/js/address.js"></script>
 </head>
 <body>
 <!-- 顶部导航 start -->
@@ -24,7 +25,12 @@
         </div>
         <div class="topnav_right fr">
             <ul>
-                <li>您好，欢迎来到京西！[<a href="login.html">登录</a>] [<a href="register.html">免费注册</a>] </li>
+                <li>您好，欢迎来到京西！ <?php if(Yii::$app->user->isGuest):?>
+                        [<?=\yii\helpers\Html::a('登录',['member/login'])?>]
+                        [<?=\yii\helpers\Html::a('免费注册',['user/logout'])?>]
+                    <?php else:?>
+                        [<?=\yii\helpers\Html::a('注销',['member/logout'])?>]
+                    <?php endif;?></li>
                 <li class="line">|</li>
                 <li>我的订单</li>
                 <li class="line">|</li>
@@ -465,7 +471,7 @@
             <h3>收货地址薄</h3>
             <?php foreach($address as $addres):?>
                 <dl>
-                    <dt>1.<?=$addres->name?> <?=$addres->city?> <?=$addres->address?> <?=$addres->tel?> </dt>
+                    <dt>1.<?=$addres->name?> <?=$addres->province?> <?=$addres->center?><?=$addres->area?><?=$addres->address?> <?=$addres->tel?> </dt>
                     <dd>
                         <a href="/member/edit-address?id=<?=$addres->id?>">修改</a>
                         <a href="/member/del-address?id=<?=$addres->id?>">删除</a>
@@ -485,19 +491,19 @@
                     <input type="text" name="Address[name]" class="txt" value="<?=$model->name?>" />
                     <p style="padding-left: 65px;color: red"></p>
                 </li>
-                <li id="area">
+                <li>
                     <label for=""><span>*</span>所在地区：</label>
                     <select name="Address[province]" id="province">
-                        <option value="">请选择省份---</option>
-                    </select>
-                    <select name="Address[center]" id="center">
-                        <option value="">请选择城市---</option>
+                        <option value="">=请选择省=</option>
                     </select>
 
-                    <select name="Address[area]" id="areas">
-                        <option value="">请选择区县---</option>
+                    <select name="Address[center]" id="city">
+                        <option value="">=请选择城市=</option>
                     </select>
-                    <p style="padding-left: 65px;color: red"></p>
+
+                    <select name="Address[area]" id="area">
+                        <option value="">=请选择区/县=</option>
+                    </select>
                 </li>
                 <li id="address">
                     <label for=""><span>*</span>详细地址：</label>
@@ -621,58 +627,60 @@
 <!-- 底部版权 end -->
 <script type="text/javascript">
     //页面加载完成就获取省份列表
-    $(function(){
-        var url='/member/locations';
-        var args='id=0';
-        $.getJSON(url,args,function(data){
-            //将省级数据放入第一个下拉框中
-            console.debug(data);
-            //使用遍历的方式获取出没有个省份
-            $(data).each(function(i,v){
-                var html='<option value="'+v.id+'">'+v.name+'</option>';
-                //console.debug($("#province"));
-                //将HTML代码放到页面中
-                $(html).appendTo($('#province'));
-            });
-        });
-
-        //获取省级下面对应的城市
-        $('#province').change(function(){
-            //清除city内除开第一行的所有选项
-            $('#city option:not(:first)').remove();
-            //清除area内除开第一行的所有选项
-            $('#areas option:not(:first)').remove();
-            var pid=$(this).val();//获取选中的省级的ID
-            var args='id='+pid;
-            //console.debug(args);
-            $.getJSON(url,args,function(data){
-                //console.debug(e);
-                $(data).each(function(i,v){//遍历取出省级下面对应的市级
-                    //console.debug(v);
-                    var html='<option value="'+v.id+'">'+v.name+'</option>';
-                    //将HTML代码放到页面中
-                    $(html).appendTo($('#center'));
+    //1 .将省数据加载到省选择框
+    $.each(address,function(i,v){
+        //console.log(v);
+        //v.name//省名称
+        $("#province").append('<option>'+v.name+'</option>');
+    });
+    //2 根据选择的省，获取对应的城市数据，然后显示到城市列表
+    $("#province").change(function(){
+        //获取当前选中的省
+        var current_province = $(this).val();
+        //var current_province = $("#province").val();
+        //console.log(current_province);
+        $.each(address,function(i,v){
+            //遍历到当前选中的省
+            if(v.name == current_province){
+                //遍历当前省的城市
+                var html='<option value="">=请选择城市=</option>';
+                $.each(v.city,function(j,k){
+                    // k.name
+                    //$("#city").append('<option>'+k.name+'</option>');
+                    html += '<option>'+k.name+'</option>';
                 });
-            });
+                //更新到城市列表
+                $("#city").html(html);
+            }
         });
+        //清除区县数据
+        $("#area").html('<option value="">=请选择区县=</option>');
+    });
 
-        //获取城市下面对应的区县
-        $('#center').change(function(){
-            $('#areas option:not(:first)').remove();//清除area内除开第一行的所有选项
-            var pid=$(this).val();//获取选中的市级的ID
-            var args='id='+pid;//根据父ID等于市级ID取出市级下面对应的区县
-            //console.debug(args);
-            $.getJSON(url,args,function(data){
-                //console.debug(e);
-                $(data).each(function(i,v){//遍历取出对应的区县
-                    //console.debug(v);
-                    var html='<option value="'+v.id+'">'+v.name+'</option>';
-                    //将HTML代码放到页面中
-                    $(html).appendTo($('#areas'));
+    //3  根据选择的城市，获取对应的区县数据，然后显示到区县列表
+    $("#city").change(function(i,v){
+        var current_province = $("#province").val();
+        var current_city = $(this).val();
+        $.each(address,function(i,v){
+            if(v.name == current_province){
+                $.each(v.city,function(j,k){
+                    if(k.name == current_city){
+                        var html='<option value="">=请选择区县=</option>';
+                        $.each(k.area,function(m,n){
+                            html += '<option>'+n+'</option>';
+                        });
+                        $("#area").html(html);
+                    }
                 });
-            });
+            }
         });
     });
+   $('#province').val('<?= $model->province?>');
+    $('#province').change();
+    $('#city').val('<?= $model->center?>');
+    $('#city').change();
+    $('#area').val('<?= $model->area?>');
+
     <?php
     if($model->getErrors()) {
         foreach ($model->errors as $name => $error) {
@@ -680,6 +688,10 @@
         }
     }
     ?>
+
+
+
 </script>
 </body>
 </html>
+

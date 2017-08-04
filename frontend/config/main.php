@@ -11,6 +11,8 @@ return [
     'basePath' => dirname(__DIR__),
     'bootstrap' => ['log'],
     'controllerNamespace' => 'frontend\controllers',
+    'defaultRoute'=> 'index/index',
+    'language'=>'zh-CN',
     'components' => [
         'request' => [
             'csrfParam' => '_csrf-frontend',
@@ -43,6 +45,14 @@ return [
             'rules' => [
             ],
         ],
+        'sms'=>[
+            'class'=>\frontend\components\AliyunSms::className(),
+            'accessKeyId'=>'LTAIrerdM4zn8GSV',
+            'accessKeySecret'=>'DZtwiEYwrA3EmqIOCegn6U4xZQYOsx',
+            'signName'=>'小亮的茶馆',
+            'templateCode'=>'SMS_80195051'
+        ]
+
 
     ],
     'params' => $params,

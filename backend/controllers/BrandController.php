@@ -200,6 +200,10 @@ class BrandController extends Controller
         return [
             'rbac'=>[
                 'class'=>RbacFilter::className(),
+                'novalidate'=>[
+                    'brand/s-upload',
+                    'brand/qiniu',
+                ]
             ]
         ];
     }

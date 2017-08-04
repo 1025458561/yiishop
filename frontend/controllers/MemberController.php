@@ -1,7 +1,9 @@
 <?php
 
 namespace frontend\controllers;
-
+use Aliyun\Core\Profile\DefaultProfile;
+use Aliyun\Core\DefaultAcsClient;
+use Aliyun\Api\Sms\Request\V20170525\SendSmsRequest;
 use frontend\models\Address;
 use frontend\models\Locations;
 use frontend\models\LoginForm;
@@ -17,17 +19,27 @@ class MemberController extends \yii\web\Controller
     public function actionRegister(){
         //实例化模型
         $model = new Member();
-        //加载数据
-        if($model->load(\Yii::$app->request->post()) && $model->validate()){
-            $model->save(false);
-            \yii::$app->session->setFlash('success','注册成功');
-            return $this->redirect(['member/index']);
+        if(\Yii::$app->request->isPost){
+            //加载数据
+           // var_dump(\Yii::$app->session->get('code_'.'18881785105'));exit;
+
+            if($model->load(\Yii::$app->request->post()) && $model->validate()){
+                //var_dump(\Yii::$app->request->post());exit;
+                $model->save(false);
+                \yii::$app->session->setFlash('success','注册成功');
+                return $this->redirect(['member/login']);
+            }else{
+                var_dump($model->getErrors());exit;
+            }
         }
         //调用视图
         return $this->render('register',['model'=>$model]);
     }
 
+public function actionIndex(){
 
+        return $this->render('index');
+}
 
     //登录开始
     public function actionLogin(){
@@ -40,17 +52,13 @@ class MemberController extends \yii\web\Controller
                 //var_dump($model);exit;
                // var_dump($model);exit;
                 \yii::$app->session->setFlash('success','登陆成功');
-                return $this->redirect(['member/index']);
+                return $this->redirect(['index/index']);
             }else{
-                //print_r($model->getErrors());exit;
+                //var_dump($model->getErrors());exit;
             }
         }
         return $this->render('login',['model'=>$model]);
     }
-
-
-
-
 
 
     //添加地址
@@ -68,7 +76,8 @@ class MemberController extends \yii\web\Controller
                 $model->save();
                 return $this->redirect(['member/address']);
             }else{
-                print_r($model->getErrors());exit;
+                //echo 111;
+                var_dump($model->getErrors());exit;
             }
         }
         //调用视图，分配数据
@@ -137,7 +146,22 @@ class MemberController extends \yii\web\Controller
         ];
     }
 
+    public function actionLogout(){
+
+        \Yii::$app->user->logout();
+        return $this->redirect('member/login');
+    }
+
     public function actionAbc(){
         var_dump(\Yii::$app->user->isGuest);
+    }
+
+    public function actionSms($tel){
+        $code = rand(10000,99999);
+        $res = \Yii::$app->sms->setPhoneNumbers($tel)->setTemplateParam(['code'=>$code])->send();
+        //将短信验证码保存redis（session，mysql）
+        \Yii::$app->session->set('code_'.$tel,$code);
+
+        return json_encode($res);
     }
 }

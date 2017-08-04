@@ -17,9 +17,7 @@ use yii\helpers\Json;
  */
 class Address extends \yii\db\ActiveRecord
 {
-    public $province;//省
-    public $center;//市
-    public $area;//区
+
     /**
      * @inheritdoc
      */
@@ -37,8 +35,8 @@ class Address extends \yii\db\ActiveRecord
             [['name','province','center','area','tel','address'],'required'],
             [['status'], 'safe'],
             [['name'], 'string', 'max' => 20],
-            [['city', 'address'], 'string', 'max' => 255],
-            [['tel'], 'string', 'max' => 11],
+            [['address'], 'string', 'max' => 255],
+
         ];
     }
 
@@ -61,10 +59,6 @@ class Address extends \yii\db\ActiveRecord
     public function beforeSave($insert)
     {
         if($insert){
-            $province=self::getName($this->province)->name;
-            $center=self::getName($this->center)->name;
-            $area=self::getName($this->area)->name;
-            $this->city=$province.$center.$area;
             $this->user_id=\Yii::$app->user->identity->id;
             if($this->status){
                 $this->status=1;
@@ -78,9 +72,5 @@ class Address extends \yii\db\ActiveRecord
         return parent::beforeSave($insert);
     }
 
-    //根据id查询省市区的名字
-    public static function getName($id){
-        $name=Locations::find()->select('name')->where(['id'=>$id])->one();
-        return $name;
-    }
+
 }

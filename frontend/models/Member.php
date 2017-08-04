@@ -25,6 +25,7 @@ class Member extends \yii\db\ActiveRecord implements IdentityInterface
     public $password;
     public $repassword;
     public $code;//验证码
+    public $sms;//手机验证码
     /**
      * @inheritdoc
      */
@@ -40,7 +41,7 @@ class Member extends \yii\db\ActiveRecord implements IdentityInterface
     {
         return [
             [['username','password','email','repassword','tel'],'required','message'=>'{attribute}不能为空'],
-            [['username','email'],'unique'],
+            [['username','email','tel'],'unique'],
             [['last_login_time', 'last_login_ip', 'status', 'created_at', 'update_at'], 'integer'],
             [['username'], 'string', 'max' => 50],
             [['auth_key'], 'string', 'max' => 32],
@@ -49,6 +50,9 @@ class Member extends \yii\db\ActiveRecord implements IdentityInterface
             ['repassword','compare','compareAttribute'=>'password','message'=>'两次密码必须一致'],
             ['email','email'],
             ['code','captcha','captchaAction'=>'member/captcha'],
+            [['tel'], 'match', 'pattern' => '/^1[24578]\d{9}$/','message'=>'{attribute}有误'],
+           ['tel','unique','message'=>'{attribute}手机号码已存在'],
+            ['sms','verify']
         ];
     }
 
@@ -71,10 +75,28 @@ class Member extends \yii\db\ActiveRecord implements IdentityInterface
             'updated_at' => '更新时间',
             'password'=>'密码',
             'repassword'=>'确认密码',
-            'code'=>'验证码',
+
+            'code'=>'验证码'
+
         ];
     }
+    //手机验证唯一性
+  /*  public function Sole(){
+       // $name = Yii::$app->user
 
+    }*/
+
+
+    //验证码
+    public function Verify(){
+
+
+        $code = \Yii::$app->session->get('code_'.$this->tel);
+      //  var_dump($this->sms);exit;
+        if($code && $this->sms != $code){
+            $this->addError('sms','验证码不正确');
+        }
+    }
     //在save之前处理数据
     public function beforeSave($insert)
     {
