@@ -692,7 +692,7 @@
                     <?php foreach ($models as $model):?>
 					<li>
 						<dl>
-							<dt><a href="/goods/content?id=<?=$model['id']?>"><img src="<?=$model['logo']?>" alt="" /></a></dt>
+							<dt><a href="/goods/content?id=<?=$model['id']?>"><img src="http://admin.yiishop.com<?=$model['logo']?>" alt="" /></a></dt>
 							<dd><a href="/goods/content?id=<?=$model['id']?>"><?=$model['name']?></a></dt>
 							<dd><strong><?=$model['shop_price']?></strong></dt>
 							<dd><a href=""><em><?=$model['view_times']?></em></a></dt>

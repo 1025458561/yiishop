@@ -556,8 +556,8 @@
 				<!-- 图片预览区域 start -->
 				<div class="preview fl">
 					<div class="midpic">
-						   <a href="<?=$model->logo?>" class="jqzoom" style="height: 200px" rel="gal1">   <!-- 第一幅图片的大图 class 和 rel属性不能更改 -->
-							<img src="<?=$model->logo?>" style="height: 200px" alt="" />               <!-- 第一幅图片的中图 -->
+						   <a href="http://admin.yiishop.com<?=$model->logo?>" class="jqzoom" style="height: 200px" rel="gal1">   <!-- 第一幅图片的大图 class 和 rel属性不能更改 -->
+							<img src="http://admin.yiishop.com<?=$model->logo?>" style="height: 200px" alt="" />               <!-- 第一幅图片的中图 -->
 						</a>
 					</div>
 	

@@ -172,8 +172,8 @@ class UserController extends Controller{
         return [
             'rbac'=>[
                 'class'=>RbacFilter::className(),
-              //  'only'=>['add','delete','edit','index']
-                'except'=>['login','captcha']
+               'only'=>['add','delete','edit','index']
+
             ]
         ];
     }

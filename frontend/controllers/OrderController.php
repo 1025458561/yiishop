@@ -19,7 +19,7 @@ class OrderController extends Controller
     {
         if (\Yii::$app->user->isGuest) {
             //没登录就跳转到登录的面
-            return $this->redirect('/member/login');
+            return $this->redirect(['member/login']);
         } else {//这是登录操作
             $model = new Order();
             $member_id = \Yii::$app->user->identity->id;

@@ -231,16 +231,16 @@ class GoodsController extends \yii\web\Controller
                 'afterValidate' => function (UploadAction $action) {},
                 'beforeSave' => function (UploadAction $action) {},
                 'afterSave' => function (UploadAction $action) {
-                    /*$action->output['fileUrl'] = $action->getWebUrl();
-                    //  $action->getFilename(); // "image/yyyymmddtimerand.jpg"
-                    // $action->getWebUrl(); //  "baseUrl + filename, /upload/image/yyyymmddtimerand.jpg"
-                    // $action->getSavePath(); // "/var/www/htdocs/upload/image/yyyymmddtimerand.jpg"
-                    //将图片上传到七牛云
+                 /*   $action->output['fileUrl'] = $action->getWebUrl();
+                    $action->getFilename(); // "image/yyyymmddtimerand.jpg"
+                 $action->getWebUrl(); //  "baseUrl + filename, /upload/image/yyyymmddtimerand.jpg"
+                   $action->getSavePath(); // "/var/www/htdocs/upload/image/yyyymmddtimerand.jpg"
+                 //  将图片上传到七牛云
                     $qiniu = new Qiniu(\Yii::$app->params['qiniu']);
                     $qiniu->uploadFile(
                         $action->getSavePath(), $action->getWebUrl()
-                    );
-                    $url = $qiniu->getLink($action->getWebUrl());
+                    );*/
+                   /* $url = $qiniu->getLink($action->getWebUrl());
                     $action->output['fileUrl'] = $url;*/
                     $goods_id = \Yii::$app->request->post('goods_id');
                     if($goods_id){
@@ -258,8 +258,7 @@ class GoodsController extends \yii\web\Controller
         ];
 
     }
-    //保存到七牛云
-  /*  public function actionQiniu(){
+   /* public function actionQiniu(){
         $config = [
             'accessKey'=>'lX4u3vgZbhaXpKgV-PytdLqoGpKT1SykXJr4XyjO',
             'secretKey'=>'oaZEfqIDiFV6XX7LyrG64kEI7_ALvpCbDOlp1E9C',
@@ -273,6 +272,7 @@ class GoodsController extends \yii\web\Controller
         return [
             'rbac'=>[
                 'class'=>RbacFilter::className(),
+                'only'=>['add','edit','delete']
             ]
         ];
     }

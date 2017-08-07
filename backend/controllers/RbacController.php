@@ -168,7 +168,7 @@ class RbacController extends Controller{
         \Yii::$app->session->setFlash('success','删除成功');
         return $this->redirect('role-index');
     }
-   public function behaviors()
+  public function behaviors()
     {
         return [
             'rbac'=>[

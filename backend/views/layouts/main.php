@@ -46,7 +46,7 @@ AppAsset::register($this);
 
 
     if (Yii::$app->user->isGuest) {
-        $menuItems[] = ['label' => '登录', 'url' => ['/user/login']];
+        $menuItems[] = ['label' => '登录', 'url' => ['user/login']];
     } else {
         $menuItems =[];
         $menus = \backend\models\Menu::findAll(['parent_id'=>0]);

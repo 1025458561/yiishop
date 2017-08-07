@@ -24,8 +24,8 @@
         <div class="topnav_right fr">
             <ul>
                 <li>您好，欢迎来到京西！ <?php if(Yii::$app->user->isGuest):?>
-                        [<?=\yii\helpers\Html::a('登录',['member/login'])?>]
-                        [<?=\yii\helpers\Html::a('免费注册',['member/register'])?>]
+                        [<?=\yii\helpers\Html::a('登录',['/member/login'])?>]
+                        [<?=\yii\helpers\Html::a('免费注册',['/member/register'])?>]
                     <?php else:?>
                         <?=\frontend\models\Member::findOne(['id'=>\Yii::$app->user->identity->getId()])->username?>
                         [<?=\yii\helpers\Html::a('注销',['member/logout'])?>]
@@ -52,9 +52,11 @@
         <div class="search fl">
             <div class="search_form">
                 <div class="form_left fl"></div>
-                <form action="" name="serarch" method="get" class="fl">
+
+                <form action="index/test" name="serarch" method="get" class="fl">
                     <input type="text" class="txt" value="请输入商品关键字" /><input type="submit" class="btn" value="搜索" />
                 </form>
+
                 <div class="form_right fl"></div>
             </div>
 
@@ -142,22 +144,34 @@
             </div>
 
             <div class="cat_bd">
-                <?php foreach ($goods as $row):?>
-                <div class="cat item1">
-                    <h3><a href="/goods/index?category_id=<?=$row->id?>"><?= $row->name?></a> <b></b></h3>
-                    <div class="cat_detail">
-                        <?php foreach ($row->children as $children):?>
-                        <dl class="dl_1st">
-                            <dt><a href="/goods/index?category_id=<?=$children->id?>"><?=$children->name?></a></dt>
-                            <dd>
-                                <?php foreach ($children->child as $child):?>
-                                <a href="/goods/index?category_id=<?=$child->id?>"> <?=$child->name?></a>
+                <?php foreach($models as $model):?>
+
+                    <div class="cat">
+                        <h3><a href="/goods/index?category_id=<?=$model->id?>"><?=$model->name?></a><b></b></h3>
+                        <?php $two=\backend\models\GoodsCategory::find()->where(['parent_id'=>$model->id])->all()?>
+
+
+
+                        <div class="cat_detail">
+                            <?php  foreach($two as $tw):?>
+                            <dl class="dl_1st">
+
+                                <dt><a href="/goods/index?category_id=<?=$tw->id?>"><?=$tw->name?></a>
+                                    <?php $three=\backend\models\GoodsCategory::find()->where(['parent_id'=>$tw->id])->all()?>
+                                    <?php foreach($three as $thr):?>
+                                <dd>
+                                    <a href="/goods/index?category_id=<?=$thr->id?>"><?=$thr->name?></a>
+                                </dd>
                                 <?php endforeach;?>
-                            </dd>
-                        </dl>
-                        <?php endforeach;?>
+                                </dt>
+                                <?php endforeach;?>
+                            </dl>
+                        </div>
+
+
+
+
                     </div>
-                </div>
                 <?php endforeach;?>
 
 

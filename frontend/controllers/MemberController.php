@@ -5,6 +5,7 @@ use Aliyun\Core\Profile\DefaultProfile;
 use Aliyun\Core\DefaultAcsClient;
 use Aliyun\Api\Sms\Request\V20170525\SendSmsRequest;
 use frontend\models\Address;
+use frontend\models\Cart;
 use frontend\models\Locations;
 use frontend\models\LoginForm;
 use frontend\models\Member;
@@ -42,25 +43,51 @@ public function actionIndex(){
 }
 
     //登录开始
-    public function actionLogin(){
-        $model= new LoginForm();
+    public function actionLogin()
+    {
+        $model = new LoginForm();
         //$user = new Member();
         //加载数据
-        if($model->load(\Yii::$app->request->post())){
+        $cookie = \Yii::$app->request->cookies->get('cart');
+
+        if ($model->load(\Yii::$app->request->post())) {
             //验证数据
-            if( $model->validate() && $model->login()){
-                //var_dump($model);exit;
-               // var_dump($model);exit;
-                \yii::$app->session->setFlash('success','登陆成功');
-                return $this->redirect(['index/index']);
-            }else{
-                //var_dump($model->getErrors());exit;
+
+            if ($model->validate() && $model->login()) {
+                // var_dump($model);exit;
+                //1.获取cookie中的购物车数据，
+                $cookie = \Yii::$app->request->cookies->get('cart');
+                if ($cookie != null) {
+                    $carts = unserialize($cookie->value);
+                    //2.循环遍历购物车数据
+                    foreach ($carts as $goods_id => $amount) {
+                        //3.(使用goods_id作为查询条件，member_id)
+                        $cart = Cart::findOne(['goods_id' => $goods_id, 'member_id' => \Yii::$app->user->id]);
+                        if ($cart) {
+                            //4.如果数据表已经有这个商品,就合并cookie中的数量
+                            $cart->amount = $cart->amount + $amount;
+                            $cart->save(false);
+                        } else {
+                            //5.如果数据表没有这个商品,就添加这个商品到购物车表
+                            $model = new Cart();
+                            $model->member_id = \Yii::$app->user->identity['id'];
+                            $model->goods_id = $goods_id;
+                            $model->amount = $amount;
+                            $model->save(false);
+                        }
+                    }
+                    \yii::$app->session->setFlash('success', '登陆成功');
+                    return $this->redirect(['index/index']);
+
+                } else {
+                    //var_dump($model->getErrors());exit;
+                }
+
             }
+
         }
-        return $this->render('login',['model'=>$model]);
+        return $this->render('login', ['model' => $model]);
     }
-
-
     //添加地址
     public function actionAddress(){
         //实例化模型
@@ -149,7 +176,7 @@ public function actionIndex(){
     public function actionLogout(){
 
         \Yii::$app->user->logout();
-        return $this->redirect('member/login');
+        return $this->redirect('/member/login');
     }
 
     public function actionAbc(){
