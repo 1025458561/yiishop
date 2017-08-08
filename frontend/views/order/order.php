@@ -178,7 +178,7 @@
                     $sum +=($row->shop_price)*($amount[$row->id]);
                     ?>
                 <tr class="goods-info" goods_id="<?=$row['id']?>">
-                    <td class="col1"><a href=""><img src="<?=$row->logo?>" alt="" /></a>  <strong><a href=""><?=$row->name ?></a></strong></td>
+                    <td class="col1"><a href=""><img src="http://admin.yiishop.com<?=$row->logo?>" alt="" /></a>  <strong><a href=""><?=$row->name ?></a></strong></td>
                     <td class="col3"><?=$row->shop_price ?></td>
                     <td class="col4" id="td<?=$row['id']?>"><?=$amount[$row->id]?></td>
                     <td class="col5"><span><?= ($row->shop_price)*($amount[$row->id]) ?></span></td>
@@ -253,12 +253,12 @@ $('#sub-mit').click(function () {
     }
     var delivery_id = $("input[name='delivery_id']:checked").val();
     if(!delivery_id){
-        alert('请选择收货地址');
+        alert('请选择发货方式');
         return false;
     }
     var pay_id=$("input[name='pay_id']:checked").val();
     if(!pay_id){
-        alert('请选择收货地址');
+        alert('请选择付款方式');
         return false;
     }
     var data = {};
@@ -273,9 +273,13 @@ $('#sub-mit').click(function () {
      data["delivery_id"] = delivery_id;
      data["pay_id"] = pay_id;
      data["goods"] = goods;
+     console.log(data);
 
-    $.post('/order/order-add',data,function (data) {
-        console.log(data);
+  $.post('/order/order-add',data,function (data) {
+        alert(data.msg);
+        if(data.status=='success'){
+            window.location.href='http://www.yiishop.com/order/over';
+        }
     },'json');
 })
 </script>

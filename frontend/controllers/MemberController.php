@@ -76,6 +76,7 @@ public function actionIndex(){
                             $model->save(false);
                         }
                     }
+                    \Yii::$app->response->cookies->remove('cart');
                     \yii::$app->session->setFlash('success', '登陆成功');
                     return $this->redirect(['index/index']);
 

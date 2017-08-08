@@ -70,7 +70,7 @@
         <?php $count=0?>
         <?php foreach ($goods as $model):?>
             <tr data-id="<?=$model['id']?>">
-                <td class="col1"><a href=""><img src="<?=$model['logo']?>" alt="" /></a>
+                <td class="col1"><a href=""><img src="http://admin.yiishop.com<?=$model['logo']?>" alt="" /></a>
                     <strong><a href=""><?=$model['name']?></a></strong></td>
                 <td class="col3">￥<span><?=$model['shop_price']?></span></td>
                 <td class="col4">

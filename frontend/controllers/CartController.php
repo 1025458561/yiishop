@@ -25,7 +25,6 @@ class CartController extends Controller{
                 $carts=unserialize($cart->value);
                 if(isset($carts[$goods_id])){//存在该商品
                     \Yii::$app->request->isAjax?$carts[$goods_id]=$amount: $carts[$goods_id]+=$amount;
-                    $carts[$goods_id]+=$amount;
                 }else{//不存在该商品
                     $carts[$goods_id]=$amount;
                 }

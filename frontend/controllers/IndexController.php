@@ -2,14 +2,19 @@
 namespace frontend\controllers;
 
 
+
 use frontend\components\SphinxClient;
 use frontend\models\GoodsCategory;
+use frontend\models\IndexSearchForm;
 use yii\web\Controller;
 
 class IndexController extends Controller{
     public $layout=false;
     public function actionIndex(){
+       // $models = new IndexSearchForm();
+
         $models =GoodsCategory::find()->where(['parent_id'=>0])->all();
+
       return $this->render('index',['models'=>$models]);
     }
 

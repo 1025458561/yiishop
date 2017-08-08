@@ -101,8 +101,9 @@ class OrderController extends Controller
                 //清除购物车数据
                  $v->delete();
             }
-            return $this->render(['cart/over']);
+            return json_encode(['status'=>'success','msg'=>'操作成功']);
         }
+        return json_encode(['status'=>'error','msg'=>'order表验证失败']);
     }
 
     public function actionOver(){
