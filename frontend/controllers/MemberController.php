@@ -112,7 +112,7 @@ public function actionIndex(){
         return $this->render('address',['model'=>$model,'address'=>$address]);
     }
     //删除地址
-    public function actionDelAddress($id){
+    public function actionDeleteAddress($id){
         $model=Address::findOne(['id'=>$id]);
         if($model==null){
             throw new NotFoundHttpException('地址不存在');

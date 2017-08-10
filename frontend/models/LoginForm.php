@@ -15,7 +15,7 @@ class LoginForm extends Model{
             [['username','password'],'required'],
             ['rememberMe','string'],
             //验证码验证规则
-            ['code','captcha','captchaAction'=>'member/captcha'],
+           // ['code','captcha','captchaAction'=>'member/captcha'],
         ];
     }
     public function attributeLabels()

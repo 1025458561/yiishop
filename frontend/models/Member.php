@@ -40,7 +40,7 @@ class Member extends \yii\db\ActiveRecord implements IdentityInterface
     public function rules()
     {
         return [
-            [['username','password','email','repassword','tel'],'required','message'=>'{attribute}不能为空'],
+            [['username','password','email'/*'repassword'*/,'tel'],'required','message'=>'{attribute}不能为空'],
             [['username','email','tel'],'unique'],
             [['last_login_time', 'last_login_ip', 'status', 'created_at', 'update_at'], 'integer'],
             [['username'], 'string', 'max' => 50],
@@ -49,7 +49,7 @@ class Member extends \yii\db\ActiveRecord implements IdentityInterface
             [['tel'], 'string', 'max' => 11],
             ['repassword','compare','compareAttribute'=>'password','message'=>'两次密码必须一致'],
             ['email','email'],
-            ['code','captcha','captchaAction'=>'member/captcha'],
+            //['code','captcha','captchaAction'=>'member/captcha'],
             [['tel'], 'match', 'pattern' => '/^1[24578]\d{9}$/','message'=>'{attribute}有误'],
            ['tel','unique','message'=>'{attribute}手机号码已存在'],
             ['sms','verify']
